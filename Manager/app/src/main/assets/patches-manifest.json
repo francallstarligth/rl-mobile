@@ -21,6 +21,8 @@
         "LyricsKeepControlsVisible",
         "PlayerBackdrop",
         "QualityBadgeColors",
+        "PlayerMovePlayingFrom",
+        "PlayerOneHanded",
         "LyricsProgressPill",
         "MiniPlayerRedesign"
       ]
