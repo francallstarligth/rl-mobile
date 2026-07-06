@@ -155,3 +155,21 @@
      .line 142
      sget-object v3, Landroidx/compose/foundation/layout/BoxScopeInstance;->INSTANCE:Landroidx/compose/foundation/layout/BoxScopeInstance;
  
+--- a/com/tidal/android/core/ui/composable/z.smali
++++ b/com/tidal/android/core/ui/composable/z.smali
+@@ -13,13 +13,15 @@
+     .line 2
+     .line 3
+     .line 4
+     move-result p0
+
+     .line 5
+-    invoke-virtual {p2, p0}, Landroid/view/Window;->setNavigationBarColor(I)V
++    const/4 v3, 0x0
++
++    invoke-virtual {p2, v3}, Landroid/view/Window;->setNavigationBarColor(I)V    # RL: force transparent nav bar so the player backdrop shows through (was p0 = TIDAL's extracted single-color BG). Luminance below still uses p0 so the light/dark icon choice adapts to the backdrop behind the now-transparent bar.
+
+     .line 6
+     .line 7
+     .line 8
+     sget p1, Landroid/os/Build$VERSION;->SDK_INT:I
