@@ -51,22 +51,95 @@
           "title": "Static",
           "fileNames": [
             "player-backdrop-static.patch"
+          ],
+          "extensionFiles": [
+            "radiant/BackdropFx.smali"
           ]
         },
         {
           "title": "Animated",
           "fileNames": [
             "player-backdrop-animated.patch"
+          ],
+          "extensionFiles": [
+            "radiant/BackdropFx.smali"
           ]
         },
         {
           "title": "Playback",
           "fileNames": [
             "player-backdrop-playback.patch"
+          ],
+          "extensionFiles": [
+            "radiant/BackdropFx.smali"
           ]
         }
       ],
       "advancedOptions": [
+        {
+          "type": "slider",
+          "key": "blur_strength",
+          "title": "Blur Strength",
+          "description": "The value of Blur applied to the backdrop cover",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "steps": 19,
+          "displayAsPercent": true,
+          "token": "RL_BLUR",
+          "encode": {
+            "kind": "int",
+            "scale": 1.0
+          }
+        },
+        {
+          "type": "slider",
+          "key": "contrast",
+          "title": "Contrast",
+          "description": "The value of Contrast applied to the backdrop cover",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "steps": 19,
+          "displayAsPercent": true,
+          "token": "RL_CONTRAST",
+          "encode": {
+            "kind": "floatBits",
+            "scale": 0.02
+          }
+        },
+        {
+          "type": "slider",
+          "key": "saturation",
+          "title": "Saturation",
+          "description": "The value of Saturation applied to the backdrop cover",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "steps": 19,
+          "displayAsPercent": true,
+          "token": "RL_SATURATION",
+          "encode": {
+            "kind": "floatBits",
+            "scale": 0.02
+          }
+        },
+        {
+          "type": "slider",
+          "key": "brightness",
+          "title": "Brightness",
+          "description": "The value of Brightness applied to the backdrop cover",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "steps": 19,
+          "displayAsPercent": true,
+          "token": "RL_BRIGHTNESS",
+          "encode": {
+            "kind": "floatBits",
+            "scale": 0.02
+          }
+        },
         {
           "type": "toggle",
           "key": "cover_everywhere",
