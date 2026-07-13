@@ -11,7 +11,7 @@
 +
 +    const/16 v51, __RL_MINI_PLAYER_SWIPE_UP_DRAG__    # Enable Drag option
 +
-+    invoke-static/range {v49 .. v51}, Lradiant/MiniPlayerGestures;->configure(Lem0/l;Landroidx/compose/material3/SheetState;Z)V    # wire swipe-up to expand the sheet
++    invoke-static/range {v49 .. v51}, Lradiant/MiniPlayerGestures;->configure(Lam0/l;Landroidx/compose/material3/SheetState;Z)V    # wire swipe-up to expand the sheet
 +
      .line 69
      invoke-static {}, Landroidx/compose/ui/platform/CompositionLocalsKt;->getLocalDensity()Landroidx/compose/runtime/ProvidableCompositionLocal;
@@ -20,9 +20,9 @@
 +++ b/com/tidal/android/feature/appscaffold/ui/composable/MiniPlayerKt.smali
 @@ -712,6 +712,22 @@
  
-     iget-object v3, v0, Lcom/tidal/android/feature/appscaffold/ui/u;->c:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$PlayState;
+     iget-object v3, v0, Lcom/tidal/android/feature/appscaffold/ui/t;->c:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$PlayState;
  
-+    iget-object v5, v0, Lcom/tidal/android/feature/appscaffold/ui/u;->a:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$ItemType;    # currently rendered mini player media type
++    iget-object v5, v0, Lcom/tidal/android/feature/appscaffold/ui/t;->a:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$ItemType;    # currently rendered mini player media type
 +
 +    sget-object v6, Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$ItemType;->Unknown:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$ItemType;    # Unknown = no media playing
 +
@@ -52,27 +52,27 @@
      .line 38
      sget-object v21, Landroidx/compose/ui/Alignment;->Companion:Landroidx/compose/ui/Alignment$Companion;
  
-@@ -1388,6 +1408,10 @@
+@@ -1390,6 +1410,10 @@
  
-     move-result-object v4
+     move-result-object v6
  
-+    invoke-static {v4}, Lradiant/MiniPlayerGestures;->feedbackModifier(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;    # move cover (swipe up feedback)
++    invoke-static {v6}, Lradiant/MiniPlayerGestures;->feedbackModifier(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;    # move cover (swipe up feedback)
 +
-+    move-result-object v4
++    move-result-object v6
 +
      .line 63
-     invoke-virtual/range {v22 .. v22}, Lcom/squareup/ui/market/core/theme/MarketStylesheet$c;->p0()Lg20/a;
+     invoke-virtual/range {v22 .. v22}, Lcom/squareup/ui/market/core/theme/MarketStylesheet$c;->p0()Lf20/a;
  
-@@ -1499,6 +1523,10 @@
+@@ -1501,6 +1525,10 @@
  
-     move-result-object v4
+     move-result-object v5
  
-+    invoke-static {v4}, Lradiant/MiniPlayerGestures;->feedbackModifier(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;    # move title/artist (swipe up feedback)
++    invoke-static {v5}, Lradiant/MiniPlayerGestures;->feedbackModifier(Landroidx/compose/ui/Modifier;)Landroidx/compose/ui/Modifier;    # move title/artist (swipe up feedback)
 +
-+    move-result-object v4
++    move-result-object v5
 +
      .line 72
-     invoke-virtual/range {v31 .. v31}, Landroidx/compose/foundation/layout/Arrangement;->getTop()Landroidx/compose/foundation/layout/Arrangement$Vertical;
+     invoke-virtual/range {v32 .. v32}, Landroidx/compose/foundation/layout/Arrangement;->getTop()Landroidx/compose/foundation/layout/Arrangement$Vertical;
  
 --- a/androidx/compose/material3/ModalBottomSheetKt$ModalBottomSheet$4$1.smali
 +++ b/androidx/compose/material3/ModalBottomSheetKt$ModalBottomSheet$4$1.smali
@@ -99,19 +99,25 @@
      :goto_0
 --- a/androidx/compose/material3/ModalBottomSheetKt.smali
 +++ b/androidx/compose/material3/ModalBottomSheetKt.smali
-@@ -1291,6 +1291,12 @@
+@@ -1288,12 +1288,18 @@
+ 
+     .line 33
+     invoke-interface {v5, v12}, Landroidx/compose/runtime/Composer;->updateRememberedValue(Ljava/lang/Object;)V
  
      .line 34
      :cond_47
 +    move-object v14, v12    # settle callback
 +
-+    check-cast v14, Lem0/l;    # to Function1
++    check-cast v14, Lam0/l;    # to Function1
 +
-+    invoke-static {v13, v14}, Lradiant/MiniPlayerGestures;->setSettleCallback(Landroidx/compose/material3/SheetState;Lem0/l;)V    # reuse native settle animation on release
++    invoke-static {v13, v14}, Lradiant/MiniPlayerGestures;->setSettleCallback(Landroidx/compose/material3/SheetState;Lam0/l;)V    # reuse native settle animation on release
 +
      move-object/from16 v32, v12
  
-     check-cast v32, Lem0/l;
+     check-cast v32, Lam0/l;
+ 
+     .line 35
+     invoke-interface {v5}, Landroidx/compose/runtime/Composer;->rememberedValue()Ljava/lang/Object;
 --- a/androidx/compose/material3/SheetDefaultsKt.smali
 +++ b/androidx/compose/material3/SheetDefaultsKt.smali
 @@ -98,7 +98,7 @@

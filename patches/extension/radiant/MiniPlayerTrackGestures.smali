@@ -419,7 +419,7 @@
 
     sget-object v0, Lradiant/MiniPlayerTrackGestures$OffsetLayer;->INSTANCE:Lradiant/MiniPlayerTrackGestures$OffsetLayer;
 
-    invoke-static {p0, v0}, Landroidx/compose/ui/graphics/GraphicsLayerModifierKt;->graphicsLayer(Landroidx/compose/ui/Modifier;Lem0/l;)Landroidx/compose/ui/Modifier;
+    invoke-static {p0, v0}, Landroidx/compose/ui/graphics/GraphicsLayerModifierKt;->graphicsLayer(Landroidx/compose/ui/Modifier;Lam0/l;)Landroidx/compose/ui/Modifier;
 
     move-result-object p0
 
@@ -431,7 +431,7 @@
 
     sget-object v0, Lradiant/MiniPlayerTrackGestures$TextDraw;->INSTANCE:Lradiant/MiniPlayerTrackGestures$TextDraw; # text clip on right only
 
-    invoke-static {p0, v0}, Landroidx/compose/ui/draw/DrawModifierKt;->drawWithContent(Landroidx/compose/ui/Modifier;Lem0/l;)Landroidx/compose/ui/Modifier;
+    invoke-static {p0, v0}, Landroidx/compose/ui/draw/DrawModifierKt;->drawWithContent(Landroidx/compose/ui/Modifier;Lam0/l;)Landroidx/compose/ui/Modifier;
 
     move-result-object p0
 
@@ -590,14 +590,14 @@
     return-void
 .end method
 
-.method public static trackModifier(Landroidx/compose/ui/Modifier;Lem0/l;)Landroidx/compose/ui/Modifier;
+.method public static trackModifier(Landroidx/compose/ui/Modifier;Lam0/l;)Landroidx/compose/ui/Modifier;
     .locals 1
 
     new-instance v0, Lradiant/MiniPlayerTrackGestures$Gesture;
 
-    invoke-direct {v0, p1}, Lradiant/MiniPlayerTrackGestures$Gesture;-><init>(Lem0/l;)V
+    invoke-direct {v0, p1}, Lradiant/MiniPlayerTrackGestures$Gesture;-><init>(Lam0/l;)V
 
-    invoke-static {p0, v0}, Landroidx/compose/ui/input/pointer/PointerInteropFilter_androidKt;->motionEventSpy(Landroidx/compose/ui/Modifier;Lem0/l;)Landroidx/compose/ui/Modifier;
+    invoke-static {p0, v0}, Landroidx/compose/ui/input/pointer/PointerInteropFilter_androidKt;->motionEventSpy(Landroidx/compose/ui/Modifier;Lam0/l;)Landroidx/compose/ui/Modifier;
 
     move-result-object p0
 

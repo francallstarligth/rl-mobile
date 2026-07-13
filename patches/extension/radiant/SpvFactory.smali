@@ -1,6 +1,6 @@
 .class public final Lradiant/SpvFactory;
 .super Ljava/lang/Object;
-.implements Lem0/l;
+.implements Lam0/l;
 
 
 # static fields

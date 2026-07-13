@@ -15,41 +15,41 @@
  
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
-@@ -1063,6 +1063,10 @@
+@@ -1146,6 +1146,10 @@
  
-     iput-object v1, v0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->V:Lkotlinx/coroutines/flow/StateFlow;
+     iput-object v1, v0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->W:Lkotlinx/coroutines/flow/StateFlow;
  
-+    iget-object v1, v0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlin/i;
++    iget-object v1, v0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->Q:Lkotlin/i;
 +
 +    invoke-interface {v1}, Lkotlin/i;->getValue()Ljava/lang/Object; # init player bg color
 +
      return-void
  .end method
  
-@@ -1620,6 +1624,8 @@
+@@ -1711,6 +1715,8 @@
      :goto_6
      invoke-interface {v9, v10}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
  
 +    invoke-static {v10}, Lradiant/MiniPlayerBackground;->setHex(Ljava/lang/String;)V # store player bg hex
 +
-     .line 263
-     .line 264
-     .line 265
-@@ -2319,6 +2325,8 @@
-     .line 598
+     .line 267
+     .line 268
+     .line 269
+@@ -2410,6 +2416,8 @@
+     .line 602
      invoke-interface {v1, v5}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
  
 +    invoke-static {v5}, Lradiant/MiniPlayerBackground;->setHex(Ljava/lang/String;)V # clear bg color
 +
-     .line 599
-     .line 600
-     .line 601
-@@ -2536,6 +2544,8 @@
-     .line 704
+     .line 603
+     .line 604
+     .line 605
+@@ -2627,6 +2635,8 @@
+     .line 708
      invoke-interface {v1, v5}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
  
 +    invoke-static {v5}, Lradiant/MiniPlayerBackground;->setHex(Ljava/lang/String;)V # clear bg color
 +
-     .line 705
-     .line 706
-     .line 707
+     .line 709
+     .line 710
+     .line 711
