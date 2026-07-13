@@ -1,5 +1,5 @@
---- a/jg/d.smali
-+++ b/jg/d.smali
+--- a/hg/d.smali
++++ b/hg/d.smali
 @@ -27,7 +27,7 @@
  
      .line 2

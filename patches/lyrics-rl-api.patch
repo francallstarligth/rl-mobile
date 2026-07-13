@@ -1,6 +1,6 @@
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
-@@ -1291,6 +1291,8 @@
+@@ -1374,6 +1374,8 @@
      .line 105
      check-cast v1, Lcom/aspiro/wamp/model/Track;
  
@@ -9,58 +9,58 @@
      .line 106
      .line 107
      invoke-virtual {v1}, Lcom/aspiro/wamp/model/MediaItem;->getId()I
-@@ -1564,7 +1566,7 @@
-     .line 235
-     .line 236
-     .line 237
--    if-nez v9, :cond_a
-+    goto :cond_a    # RL: skip TIDAL O=false in the has-lyrics path
- 
-     .line 238
+@@ -1655,7 +1657,7 @@
      .line 239
-@@ -2256,7 +2258,10 @@
+     .line 240
+     .line 241
+-    if-nez v9, :cond_a
++    goto :cond_a    # skip TIDAL P=false in the has-lyrics path (for some reason)
  
-     .line 568
+     .line 242
+     .line 243
+@@ -2347,7 +2349,10 @@
+ 
+     .line 572
      :goto_c
 +    sget-boolean v5, Lradiant/RLAPILyricsHook;->isRlState:Z
 +    if-nez v5, :rl_keep_n2    # RL active -> keep worker content
      invoke-interface {v9, v1}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 +    :rl_keep_n2
  
-     .line 569
-     .line 570
-@@ -2305,7 +2310,10 @@
+     .line 573
+     .line 574
+@@ -2396,7 +2401,10 @@
  
-     .line 591
-     .line 592
+     .line 595
+     .line 596
 +    sget-boolean v7, Lradiant/RLAPILyricsHook;->isRlState:Z
 +    if-nez v7, :rl_keep_o    # RL active -> keep view-open flag
      invoke-interface {v1, v5}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 +    :rl_keep_o
  
-     .line 593
-     .line 594
-@@ -2334,7 +2342,10 @@
+     .line 597
+     .line 598
+@@ -2425,7 +2433,10 @@
  
-     .line 606
-     .line 607
+     .line 610
+     .line 611
 +    sget-boolean v7, Lradiant/RLAPILyricsHook;->isRlState:Z
 +    if-nez v7, :rl_keep_n    # RL active -> keep worker content
      invoke-interface {v1, v6}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 +    :rl_keep_n
  
-     .line 608
-     .line 609
+     .line 612
+     .line 613
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$special$$inlined$mapNotNull$1$2.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$special$$inlined$mapNotNull$1$2.smali
-@@ -2202,6 +2202,10 @@
-     .line 1011
-     .line 1012
-     move-result v31
-+    sget-boolean v5, Lradiant/RLAPILyricsHook;->isRlState:Z
-+    if-eqz v5, :rl_hl_done    # not RL -> use TIDAL's hasLyrics
-+    const/16 v31, 0x1    # RL lyrics active -> force hasLyrics so the sparkle stays
+@@ -2256,6 +2256,10 @@
+     .line 1040
+     .line 1041
+     move-result v34
++    sget-boolean v4, Lradiant/RLAPILyricsHook;->isRlState:Z
++    if-eqz v4, :rl_hl_done    # not RL = use TIDAL's hasLyrics
++    const/16 v34, 0x1    # RL lyrics active = force hasLyrics so the sparkle stays
 +    :rl_hl_done
  
-     .line 1013
-     iget-object v5, v1, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->O:Lkotlinx/coroutines/flow/MutableStateFlow;
+     .line 1042
+     iget-object v4, v1, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;

@@ -2,7 +2,7 @@
 +++ b/com/tidal/android/feature/playerscreen/ui/composables/SeekbarAndTimeKt.smali
 @@ -372,6 +372,10 @@
      .line 158
-     sget v4, Lcom/tidal/android/feature/playerscreen/ui/composables/m4;->g:F
+     sget v4, Lcom/tidal/android/feature/playerscreen/ui/composables/t4;->g:F
  
 +    const/high16 v11, 0x40000000    # 2.0f
 +
@@ -30,7 +30,7 @@
 +
 +    move-object/from16 v3, p1
 +
-+    invoke-static {v13, v3}, Lradiant/QualityBadge;->style(ILr20/c2;)Lr20/c2;
++    invoke-static {v13, v3}, Lradiant/QualityBadge;->style(ILq20/c2;)Lq20/c2;
 +
 +    move-result-object v8
 +
@@ -72,46 +72,46 @@
      return-void
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$special$$inlined$mapNotNull$1$2.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$special$$inlined$mapNotNull$1$2.smali
-@@ -1399,7 +1399,15 @@
-     .line 634
-     .line 635
-     .line 636
--    move-result v9
-+    move-result v9    # isCurrentStreamHiResLosslessQuality() result
+@@ -1452,7 +1452,15 @@
+     .line 662
+     .line 663
+     .line 664
+-    move-result v8
++    move-result v8    # isCurrentStreamHiResLosslessQuality() result
 +
 +    const/16 v31, 0x0    # LOW / HIGH quality
 +
-+    if-eqz v9, :radiant_qbc_not_hires
++    if-eqz v8, :radiant_qbc_not_hires
 +
 +    const/16 v31, 0x2    # HI_RES_LOSSLESS quality
 +
 +    :radiant_qbc_not_hires
  
-     .line 637
-     if-nez v9, :cond_1e
-@@ -1411,7 +1419,13 @@
-     .line 640
-     .line 641
-     .line 642
--    move-result v9
-+    move-result v9    # isCurrentStreamLossless() result
+     .line 665
+     if-nez v8, :cond_1f
+@@ -1464,7 +1472,13 @@
+     .line 668
+     .line 669
+     .line 670
+-    move-result v8
++    move-result v8    # isCurrentStreamLossless() result
 +
-+    if-eqz v9, :radiant_qbc_not_lossless
++    if-eqz v8, :radiant_qbc_not_lossless
 +
 +    const/16 v31, 0x1    # LOSSLESS quality
 +
 +    :radiant_qbc_not_lossless
  
-     .line 643
-     if-eqz v9, :cond_1d
-@@ -1740,7 +1754,9 @@
+     .line 671
+     if-eqz v8, :cond_1e
+@@ -1793,7 +1807,9 @@
  
-     .line 790
-     .line 791
--    invoke-direct {v7, v5}, Lcom/tidal/android/feature/playerscreen/ui/i$a;-><init>(Ljava/lang/String;)V
+     .line 818
+     .line 819
+-    invoke-direct {v5, v4}, Lcom/tidal/android/feature/playerscreen/ui/i$a;-><init>(Ljava/lang/String;)V
 +    move/from16 v9, v31    # quality
 +
-+    invoke-direct {v7, v5, v9}, Lcom/tidal/android/feature/playerscreen/ui/i$a;-><init>(Ljava/lang/String;I)V
++    invoke-direct {v5, v4, v9}, Lcom/tidal/android/feature/playerscreen/ui/i$a;-><init>(Ljava/lang/String;I)V
  
-     .line 792
-     .line 793
+     .line 820
+     .line 821

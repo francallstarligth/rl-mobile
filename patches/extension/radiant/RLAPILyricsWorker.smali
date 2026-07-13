@@ -412,7 +412,7 @@
 
     iget-object v4, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
 
-    iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->O:Lkotlinx/coroutines/flow/MutableStateFlow;
+    iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
 
     sget-object v6, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
 
@@ -485,9 +485,9 @@
     :key_ok
     iget-object v4, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
 
-    iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->N:Lkotlinx/coroutines/flow/MutableStateFlow;
+    iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->O:Lkotlinx/coroutines/flow/MutableStateFlow;
 
-    invoke-static {v3}, Lzn0/a;->c(Ljava/lang/Iterable;)Lzn0/b;
+    invoke-static {v3}, Lvn0/a;->c(Ljava/lang/Iterable;)Lvn0/b;
 
     move-result-object v6
 
@@ -504,7 +504,7 @@
 
     const/4 v10, 0x0
 
-    invoke-direct {v8, v7, v6, v9, v10}, Lcom/tidal/android/feature/playerscreen/ui/g$c;-><init>(Ljava/lang/String;Lzn0/b;IZ)V
+    invoke-direct {v8, v7, v6, v9, v10}, Lcom/tidal/android/feature/playerscreen/ui/g$c;-><init>(Ljava/lang/String;Lvn0/b;IZ)V
 
     const-string v6, "publishing g$c -> K=true (O=true if sticky) N=g$c"
 
@@ -524,7 +524,7 @@
 
     if-eqz v9, :skip_n
 
-    iget-object v6, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->O:Lkotlinx/coroutines/flow/MutableStateFlow;
+    iget-object v6, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
 
     invoke-interface {v6, v7}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 

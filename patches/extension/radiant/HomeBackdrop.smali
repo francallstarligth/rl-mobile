@@ -5,6 +5,20 @@
 # static fields
 .field public static volatile currentAlbumId:I
 
+# 0 = Static, 1 = Animated (always rotate), 2 = Playback (follow live play state)
+.field public static volatile mode:I
+
+# Live play state from the mini-player (t.c PlayState = Playing)
+.field public static isPlayingState:Landroidx/compose/runtime/MutableState;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Landroidx/compose/runtime/MutableState<",
+            "Ljava/lang/Boolean;",
+            ">;"
+        }
+    .end annotation
+.end field
+
 .field public static coverUuidState:Landroidx/compose/runtime/MutableState;
     .annotation system Ldalvik/annotation/Signature;
         value = {
@@ -24,6 +38,24 @@
 
     sput v0, Lradiant/HomeBackdrop;->currentAlbumId:I
 
+    const/4 v0, 0x2
+
+    sput v0, Lradiant/HomeBackdrop;->mode:I
+
+    sget-object v0, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+
+    const/4 v1, 0x0
+
+    const/4 v2, 0x2
+
+    const/4 v3, 0x0
+
+    invoke-static {v0, v1, v2, v3}, Landroidx/compose/runtime/SnapshotStateKt;->mutableStateOf$default(Ljava/lang/Object;Landroidx/compose/runtime/SnapshotMutationPolicy;ILjava/lang/Object;)Landroidx/compose/runtime/MutableState;
+
+    move-result-object v0
+
+    sput-object v0, Lradiant/HomeBackdrop;->isPlayingState:Landroidx/compose/runtime/MutableState;
+
     const/4 v0, 0x0
 
     const/4 v1, 0x0
@@ -37,6 +69,64 @@
     move-result-object v0
 
     sput-object v0, Lradiant/HomeBackdrop;->coverUuidState:Landroidx/compose/runtime/MutableState;
+
+    return-void
+.end method
+
+.method public static setModeStatic()V
+    .locals 1
+
+    const/4 v0, 0x0
+
+    sput v0, Lradiant/HomeBackdrop;->mode:I
+
+    return-void
+.end method
+
+.method public static setModeAnimated()V
+    .locals 1
+
+    const/4 v0, 0x1
+
+    sput v0, Lradiant/HomeBackdrop;->mode:I
+
+    return-void
+.end method
+
+.method public static setModePlayback()V
+    .locals 1
+
+    const/4 v0, 0x2
+
+    sput v0, Lradiant/HomeBackdrop;->mode:I
+
+    return-void
+.end method
+
+# from the mini-player state ctor (t.<init>) whenever play state changes.
+.method public static onPlayState(Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$PlayState;)V
+    .locals 2
+
+    sget-object v0, Lradiant/HomeBackdrop;->isPlayingState:Landroidx/compose/runtime/MutableState;
+
+    if-nez v0, :cond_ready
+
+    return-void
+
+    :cond_ready
+    sget-object v1, Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$PlayState;->Playing:Lcom/tidal/android/feature/appscaffold/ui/MiniPlayerContract$PlayState;
+
+    if-ne p0, v1, :cond_paused
+
+    sget-object v1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
+
+    goto :goto_set
+
+    :cond_paused
+    sget-object v1, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+
+    :goto_set
+    invoke-interface {v0, v1}, Landroidx/compose/runtime/MutableState;->setValue(Ljava/lang/Object;)V
 
     return-void
 .end method
@@ -271,97 +361,52 @@
 
     if-eqz v2, :skip
 
-    sget v2, Lradiant/HomeBackdrop;->currentAlbumId:I
-
-    new-instance v3, Lcom/tidal/android/feature/playerscreen/ui/composables/o0;
-
-    invoke-direct {v3, v2, v1}, Lcom/tidal/android/feature/playerscreen/ui/composables/o0;-><init>(ILjava/lang/String;)V
-
-    sget-object v4, Landroidx/compose/ui/Modifier;->Companion:Landroidx/compose/ui/Modifier$Companion;
-
-    const/4 v5, 0x0
-
-    const/4 v6, 0x1
-
-    const/4 v7, 0x0
-
-    invoke-static {v4, v5, v6, v7}, Landroidx/compose/foundation/layout/SizeKt;->fillMaxSize$default(Landroidx/compose/ui/Modifier;FILjava/lang/Object;)Landroidx/compose/ui/Modifier;
-
-    move-result-object v4
-
-    const/high16 v5, 0x42200000
-
-    invoke-static {v5}, Landroidx/compose/ui/unit/Dp;->constructor-impl(F)F
-
-    move-result v5
-
-    sget-object v6, Landroidx/compose/ui/draw/BlurredEdgeTreatment;->Companion:Landroidx/compose/ui/draw/BlurredEdgeTreatment$Companion;
-
-    invoke-virtual {v6}, Landroidx/compose/ui/draw/BlurredEdgeTreatment$Companion;->getRectangle---Goahg()Landroidx/compose/ui/graphics/Shape;
-
-    move-result-object v6
-
-    invoke-static {v4, v5, v6}, Landroidx/compose/ui/draw/BlurKt;->blur-F8QBwvs(Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/graphics/Shape;)Landroidx/compose/ui/Modifier;
-
-    move-result-object v4
-
-    sget-object v5, Landroidx/compose/ui/layout/ContentScale;->Companion:Landroidx/compose/ui/layout/ContentScale$Companion;
-
-    invoke-virtual {v5}, Landroidx/compose/ui/layout/ContentScale$Companion;->getCrop()Landroidx/compose/ui/layout/ContentScale;
-
-    move-result-object v5
-
-    move-object/from16 v6, v3
-
-    const/4 v7, 0x0
-
-    move-object/from16 v8, v4
+    # Render TIDAL's NATIVE DarkBlurBackground (p3.a)
+    sget-object v8, Landroidx/compose/ui/Modifier;->Companion:Landroidx/compose/ui/Modifier$Companion;
 
     const/4 v9, 0x0
 
-    move-object/from16 v10, v5
+    const/4 v10, 0x1
 
-    move-object/from16 v11, v1    # uuid as cache key
+    const/4 v11, 0x0
 
-    const/4 v12, 0x0
+    invoke-static {v8, v9, v10, v11}, Landroidx/compose/foundation/layout/SizeKt;->fillMaxSize$default(Landroidx/compose/ui/Modifier;FILjava/lang/Object;)Landroidx/compose/ui/Modifier;
 
-    move-object/from16 v13, v0
+    move-result-object v13    # v13 = fillMaxSize modifier
 
-    const/4 v14, 0x0
+    sget v8, Lradiant/HomeBackdrop;->currentAlbumId:I    # v8 = album id
 
-    const/16 v15, 0x48
+    move-object v9, v1    # v9 = cover uuid
 
-    invoke-static/range {v6 .. v15}, Lee0/e;->a(Lem0/l;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/ColorFilter;Landroidx/compose/ui/layout/ContentScale;Ljava/lang/Object;Lem0/a;Landroidx/compose/runtime/Composer;II)V
+    # v10 = isPlaying, mirrored from the Player Backdrop variant
+    sget v10, Lradiant/HomeBackdrop;->mode:I
 
-    sget-object v3, Landroidx/compose/ui/Modifier;->Companion:Landroidx/compose/ui/Modifier$Companion;
+    const/4 v11, 0x2
 
-    const/4 v4, 0x0
+    if-ne v10, v11, :rl_mode_done
 
-    const/4 v5, 0x1
+    sget-object v10, Lradiant/HomeBackdrop;->isPlayingState:Landroidx/compose/runtime/MutableState;
 
-    const/4 v6, 0x0
+    invoke-interface {v10}, Landroidx/compose/runtime/State;->getValue()Ljava/lang/Object;
 
-    invoke-static {v3, v4, v5, v6}, Landroidx/compose/foundation/layout/SizeKt;->fillMaxSize$default(Landroidx/compose/ui/Modifier;FILjava/lang/Object;)Landroidx/compose/ui/Modifier;
+    move-result-object v10
 
-    move-result-object v3
+    check-cast v10, Ljava/lang/Boolean;
 
-    const v4, -0x80000000
+    invoke-virtual {v10}, Ljava/lang/Boolean;->booleanValue()Z
 
-    invoke-static {v4}, Landroidx/compose/ui/graphics/ColorKt;->Color(I)J
+    move-result v10
 
-    move-result-wide v4
+    :rl_mode_done
+    const/4 v11, 0x0    # v11 = isSeeking = false
 
-    invoke-static {}, Landroidx/compose/ui/graphics/RectangleShapeKt;->getRectangleShape()Landroidx/compose/ui/graphics/Shape;
+    const/4 v12, 0x0    # v12 = progress callback = null (unused while not seeking)
 
-    move-result-object v6
+    move-object v14, v0    # v14 = composer
 
-    invoke-static {v3, v4, v5, v6}, Landroidx/compose/foundation/BackgroundKt;->background-bw27NRU(Landroidx/compose/ui/Modifier;JLandroidx/compose/ui/graphics/Shape;)Landroidx/compose/ui/Modifier;
+    const/4 v15, 0x0    # v15 = changed flags
 
-    move-result-object v3
-
-    const/4 v4, 0x0
-
-    invoke-static {v3, v0, v4}, Landroidx/compose/foundation/layout/SpacerKt;->Spacer(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+    invoke-static/range {v8 .. v15}, Lcom/tidal/android/feature/playerscreen/ui/composables/p3;->a(ILjava/lang/String;ZZLam0/a;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 
     :skip
     invoke-interface {v0}, Landroidx/compose/runtime/Composer;->endReplaceGroup()V

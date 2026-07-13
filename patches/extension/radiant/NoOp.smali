@@ -1,6 +1,6 @@
 .class public final Lradiant/NoOp;
 .super Ljava/lang/Object;
-.implements Lem0/a;
+.implements Lam0/a;
 
 
 # static fields
@@ -33,7 +33,7 @@
 .method public final invoke()Ljava/lang/Object;
     .locals 1
 
-    sget-object v0, Lkotlin/v;->a:Lkotlin/v;
+    sget-object v0, Lkotlin/u;->a:Lkotlin/u;
 
     return-object v0
 .end method

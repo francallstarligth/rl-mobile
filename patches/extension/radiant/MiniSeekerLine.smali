@@ -5,7 +5,7 @@
 # static fields
 .field public static progressState:Landroidx/compose/runtime/MutableFloatState;
 
-.field public static volatile vm:Lih/g;
+.field public static volatile vm:Lgh/j;
 
 .field public static volatile sub:Lio/reactivex/disposables/Disposable;
 
@@ -57,7 +57,7 @@
 
     :start_block
     :try_start
-    sget-object v0, Lradiant/MiniSeekerLine;->vm:Lih/g;    # cached vm
+    sget-object v0, Lradiant/MiniSeekerLine;->vm:Lgh/j;    # cached vm
 
     if-nez v0, :got_vm    # reuse if present
 
@@ -69,28 +69,28 @@
 
     move-result-object v0    # component
 
-    check-cast v0, Le5/u$n2;    # narrow type
+    check-cast v0, Le5/z$n2;    # narrow type
 
-    iget-object v0, v0, Le5/u$n2;->z0:Ldagger/internal/j;    # playqueue provider
+    iget-object v0, v0, Le5/z$n2;->z0:Ldagger/internal/j;    # playqueue provider
 
-    invoke-interface {v0}, Lul0/a;->get()Ljava/lang/Object;    # resolve
+    invoke-interface {v0}, Lql0/a;->get()Ljava/lang/Object;    # resolve
 
     move-result-object v0    # playqueue
 
-    check-cast v0, Lcom/aspiro/wamp/playqueue/y0;    # narrow type
+    check-cast v0, Lcom/aspiro/wamp/playqueue/d1;    # narrow type
 
-    new-instance v1, Lih/g;    # build vm
+    new-instance v1, Lgh/j;    # build vm
 
-    invoke-direct {v1, v0}, Lih/g;-><init>(Lcom/aspiro/wamp/playqueue/y0;)V    # ctor
+    invoke-direct {v1, v0}, Lgh/j;-><init>(Lcom/aspiro/wamp/playqueue/d1;)V    # ctor
 
-    sput-object v1, Lradiant/MiniSeekerLine;->vm:Lih/g;    # cache
+    sput-object v1, Lradiant/MiniSeekerLine;->vm:Lgh/j;    # cache
 
     :got_vm
-    sget-object v0, Lradiant/MiniSeekerLine;->vm:Lih/g;    # vm ref
+    sget-object v0, Lradiant/MiniSeekerLine;->vm:Lgh/j;    # vm ref
 
-    invoke-virtual {v0}, Lih/g;->a()V    # activate emission
+    invoke-virtual {v0}, Lgh/j;->a()V    # activate emission
 
-    iget-object v0, v0, Lih/g;->d:Lio/reactivex/subjects/BehaviorSubject;    # position subject
+    iget-object v0, v0, Lgh/j;->d:Lio/reactivex/subjects/BehaviorSubject;    # position subject
 
     invoke-static {}, Lio/reactivex/android/schedulers/AndroidSchedulers;->mainThread()Lio/reactivex/Scheduler;    # main scheduler
 

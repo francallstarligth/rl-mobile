@@ -21,6 +21,8 @@
         "LyricsKeepControlsVisible",
         "PlayerBackdrop",
         "QualityBadgeColors",
+        "PlayerMovePlayingFrom",
+        "PlayerOneHanded",
         "LyricsProgressPill",
         "MiniPlayerRedesign"
       ]
@@ -39,49 +41,37 @@
     {
       "id": "PlayerBackdrop",
       "order": 30,
-      "fileNames": [
-        "player-backdrop.patch"
-      ],
+      "fileNames": [],
       "title": "Player Backdrop",
-      "description": "Restores the legacy translucent backdrop blur behind the player",
+      "description": "Lets you fully adjust how the player backdrop blur looks and behaves",
       "default": true,
+      "defaultVariantIndex": 2,
+      "variants": [
+        {
+          "title": "Static",
+          "fileNames": [
+            "player-backdrop-static.patch"
+          ]
+        },
+        {
+          "title": "Animated",
+          "fileNames": [
+            "player-backdrop-animated.patch"
+          ]
+        },
+        {
+          "title": "Playback",
+          "fileNames": [
+            "player-backdrop-playback.patch"
+          ]
+        }
+      ],
       "advancedOptions": [
-        {
-          "type": "slider",
-          "key": "blur_strength",
-          "title": "Blur Strength",
-          "description": "How strongly the album art behind the player is blurred",
-          "default": 50,
-          "min": 0,
-          "max": 100,
-          "steps": 19,
-          "displayAsPercent": true,
-          "token": "RL_BLUR_BITS",
-          "encode": {
-            "kind": "floatBits",
-            "scale": 1.8
-          }
-        },
-        {
-          "type": "slider",
-          "key": "dimming",
-          "title": "Backdrop Dimming",
-          "description": "Darkens the backdrop so the foreground controls stay legible",
-          "default": 50,
-          "min": 0,
-          "max": 100,
-          "steps": 19,
-          "displayAsPercent": true,
-          "token": "RL_SCRIM_ARGB",
-          "encode": {
-            "kind": "argbAlpha"
-          }
-        },
         {
           "type": "toggle",
           "key": "cover_everywhere",
           "title": "Cover Everywhere - WIP",
-          "description": "Applies the blurred backdrop to every Compose based page (Home & Collection)",
+          "description": "Applies TIDAL's player backdrop to every Compose based page (Home & Collection)",
           "default": false,
           "inline": true,
           "fileNames": [
@@ -283,7 +273,7 @@
             "radiant/MiniPlayerTrackGestures$OffsetLayer.smali",
             "radiant/MiniPlayerTrackGestures$ResetAnimator.smali",
             "radiant/MiniPlayerTrackGestures$TextDraw.smali",
-            "com/tidal/android/feature/appscaffold/ui/s$c.smali"
+            "com/tidal/android/feature/appscaffold/ui/r$c.smali"
           ]
         }
       ]
