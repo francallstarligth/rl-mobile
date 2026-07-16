@@ -5,7 +5,11 @@
 # static fields
 .field public static volatile currentKey:Ljava/lang/String;
 
+.field public static volatile currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
 .field public static volatile isRlState:Z
+
+.field public static volatile keepOpen:Z
 
 
 # direct methods
@@ -16,7 +20,11 @@
 
     sput-object v0, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
 
+    sput-object v0, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
     sput-boolean v0, Lradiant/RLAPILyricsHook;->isRlState:Z
+
+    sput-boolean v0, Lradiant/RLAPILyricsHook;->keepOpen:Z
 
     return-void
 .end method
@@ -60,6 +68,45 @@
     return v1
 .end method
 
+.method public static isOwner(Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;)Z
+    .locals 2
+
+    sget-object v0, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    if-ne p0, v0, :not_owner
+
+    sget-boolean v1, Lradiant/RLAPILyricsHook;->isRlState:Z
+
+    return v1
+
+    :not_owner
+    const/4 v1, 0x0
+
+    return v1
+.end method
+
+.method public static shouldKeepOpen(Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;)Z
+    .locals 2
+
+    sget-object v0, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    if-ne p0, v0, :do_not_keep
+
+    sget-boolean v1, Lradiant/RLAPILyricsHook;->keepOpen:Z
+
+    if-nez v1, :keep
+
+    sget-boolean v1, Lradiant/RLAPILyricsHook;->isRlState:Z
+
+    :keep
+    return v1
+
+    :do_not_keep
+    const/4 v1, 0x0
+
+    return v1
+.end method
+
 .method public static onWampTrack(Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;Lcom/aspiro/wamp/model/Track;)V
     .locals 11
 
@@ -80,7 +127,7 @@
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :invalid_track
 
     :have_track
     invoke-virtual {p1}, Lcom/aspiro/wamp/model/MediaItem;->getTitle()Ljava/lang/String;
@@ -93,7 +140,7 @@
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :invalid_track
 
     :title_present
     invoke-static {v1}, Lradiant/RLAPILyricsHook;->isBlank(Ljava/lang/String;)Z
@@ -106,7 +153,7 @@
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :invalid_track
 
     :title_ok
     invoke-virtual {p1}, Lcom/aspiro/wamp/model/MediaItem;->getArtistNames()Ljava/lang/String;
@@ -119,7 +166,7 @@
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :invalid_track
 
     :artist_present
     invoke-static {v2}, Lradiant/RLAPILyricsHook;->isBlank(Ljava/lang/String;)Z
@@ -132,24 +179,14 @@
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :invalid_track
 
     :artist_ok
-    const-string v3, ""
+    invoke-virtual {p1}, Lcom/aspiro/wamp/model/MediaItem;->getId()I
 
-    new-instance v4, Ljava/lang/StringBuilder;
+    move-result v3
 
-    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
-
-    invoke-virtual {v4, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    const-string v5, "|"
-
-    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v4, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    invoke-static {v3}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
 
     move-result-object v4
 
@@ -161,6 +198,10 @@
 
     if-eqz v5, :rl_new_track
 
+    sget-object v5, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    if-ne p0, v5, :rl_new_track
+
     const-string v5, "onWampTrack: same track re-fired, skipping duplicate fetch"
 
     invoke-static {v5}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
@@ -168,11 +209,50 @@
     return-void
 
     :rl_new_track
+    iget-object v5, p0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
+
+    invoke-interface {v5}, Lkotlinx/coroutines/flow/MutableStateFlow;->getValue()Ljava/lang/Object;
+
+    move-result-object v5
+
+    check-cast v5, Ljava/lang/Boolean;
+
+    invoke-virtual {v5}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v5
+
+    if-nez v5, :store_keep_open
+
+    sget-object v6, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    if-eqz v6, :store_keep_open
+
+    if-eq p0, v6, :store_keep_open
+
+    iget-object v7, v6, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
+
+    invoke-interface {v7}, Lkotlinx/coroutines/flow/MutableStateFlow;->getValue()Ljava/lang/Object;
+
+    move-result-object v7
+
+    check-cast v7, Ljava/lang/Boolean;
+
+    invoke-virtual {v7}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v5
+
+    :store_keep_open
+    sput-boolean v5, Lradiant/RLAPILyricsHook;->keepOpen:Z
+
     const/4 v5, 0x0
 
     sput-boolean v5, Lradiant/RLAPILyricsHook;->isRlState:Z
 
     sput-object v4, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
+
+    sput-object p0, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    move-object v3, v4
 
     new-instance v5, Ljava/lang/StringBuilder;
 
@@ -221,6 +301,19 @@
     invoke-virtual {v6, v7}, Ljava/lang/Thread;->setDaemon(Z)V
 
     invoke-virtual {v6}, Ljava/lang/Thread;->start()V
+
+    goto :done
+
+    :invalid_track
+    const/4 v3, 0x0
+
+    sput-boolean v3, Lradiant/RLAPILyricsHook;->isRlState:Z
+
+    sput-boolean v3, Lradiant/RLAPILyricsHook;->keepOpen:Z
+
+    sput-object v3, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
+
+    sput-object p0, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
 
     :done
     return-void
