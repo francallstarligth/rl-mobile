@@ -11,13 +11,18 @@
      .line 28
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel.smali
-@@ -1382,6 +1382,14 @@
+@@ -1382,6 +1382,19 @@
      .line 109
      .line 110
      move-result v1
 +    sget v4, Lradiant/LyricsReinitGuard;->lastMediaId:I
-+    if-eq v1, v4, :rl_skip_reinit    # same track re-emitted -> skip the redundant re-init (avoids the loading-state flash)
++    if-ne v1, v4, :rl_reinit_store
++    sget-object v4, Lradiant/LyricsReinitGuard;->lastVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
++    if-ne v0, v4, :rl_reinit_store
++    goto :rl_skip_reinit    # only suppress duplicate initialization on the same ViewModel
++    :rl_reinit_store
 +    sput v1, Lradiant/LyricsReinitGuard;->lastMediaId:I
++    sput-object v0, Lradiant/LyricsReinitGuard;->lastVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
 +    goto :rl_reinit_ok
 +    :rl_skip_reinit
 +    sget-object v4, Lkotlin/u;->a:Lkotlin/u;

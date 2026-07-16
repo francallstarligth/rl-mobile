@@ -2,13 +2,24 @@
 
 A Manager app for Android that patches TIDAL to bring the Radiant Lyrics experience to mobile.
 
-## What it does
+## What it does?
 
-- Blurred album art background in the player
-- Progress pill overlay in lyrics mode - restored from old UI
-- Hides the ugly cover art when in lyrics mode
+This project adds ALLOT of completely Optional & Customisable Patches/Integrations to TIDAL on Android (iOS SoonTM).
+Every Patch & Integration can be disabled/enabled & adjusted exactly how you want TIDAL to feel/look <3
+
+### Patches:
+
+- Insane Customisation of the Player Backdrop
+- Higher quality lyrics from more providers (WIP)
+- Progress pill overlay in lyrics mode (restored from old UI)
+- Keeps lyrics controls visible
+- One-handed player controls
+- Redesigned mini-player with gestures
 - Syllable Level lyrics (SoonTM)
 
+### Integrations
+
+- Waze | Control TIDAL playback from Waze
 
 ### Disclaimer
 
@@ -18,7 +29,10 @@ This project is not affiliated with TIDAL in any way. Use at your own risk.
 ## Installation
 
 ### Batteries <3
-- Android 10.0+ & >340 DPI
+- Phone of some unknown description
+- The smallest amount of brain damage
+- Android 7.0+ & >340 DPI
+- Internet
 - Paid TIDAL Account
 
 ### Steps

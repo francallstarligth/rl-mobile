@@ -34,6 +34,86 @@
     return-void
 .end method
 
+.method private failCurrent()V
+    .locals 4
+
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->isCurrent()Z
+
+    move-result v0
+
+    if-eqz v0, :done
+
+    const/4 v0, 0x0
+
+    sput-object v0, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
+
+    sput-boolean v0, Lradiant/RLAPILyricsHook;->isRlState:Z
+
+    sget-boolean v0, Lradiant/StickyLyrics;->enabled:Z
+
+    if-nez v0, :done
+
+    sget-boolean v0, Lradiant/RLAPILyricsHook;->keepOpen:Z
+
+    if-nez v0, :done
+
+    iget-object v1, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    iget-object v2, v1, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
+
+    sget-object v3, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+
+    invoke-interface {v2, v3}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
+
+    :done
+    return-void
+.end method
+
+.method private isCurrent()Z
+    .locals 4
+
+    iget-object v0, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    sget-object v1, Lradiant/RLAPILyricsHook;->currentVm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+
+    if-ne v0, v1, :not_current
+
+    iget-object v1, v0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->a:Lbi/e;
+
+    invoke-interface {v1}, Lbi/e;->getCurrentItem()Lcom/aspiro/wamp/playqueue/u0;
+
+    move-result-object v1
+
+    if-eqz v1, :not_current
+
+    invoke-interface {v1}, Lcom/aspiro/wamp/playqueue/u0;->getMediaItem()Lcom/aspiro/wamp/model/MediaItem;
+
+    move-result-object v1
+
+    if-eqz v1, :not_current
+
+    invoke-virtual {v1}, Lcom/aspiro/wamp/model/MediaItem;->getId()I
+
+    move-result v2
+
+    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+
+    move-result-object v1
+
+    iget-object v2, p0, Lradiant/RLAPILyricsWorker;->key:Ljava/lang/String;
+
+    invoke-virtual {v2, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v3
+
+    return v3
+
+    :not_current
+    const/4 v3, 0x0
+
+    return v3
+.end method
+
 .method public static fetch(Ljava/lang/String;Z)Ljava/lang/String;
     .locals 7
 
@@ -396,30 +476,7 @@
 
     invoke-static {v4}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    iget-object v4, p0, Lradiant/RLAPILyricsWorker;->key:Ljava/lang/String;
-
-    sget-object v5, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
-
-    invoke-virtual {v4, v5}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-
-    move-result v4
-
-    if-eqz v4, :no_close    # Smthn needed to keep lyrics open
-
-    sget-boolean v4, Lradiant/StickyLyrics;->enabled:Z
-
-    if-nez v4, :no_close
-
-    iget-object v4, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
-
-    iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
-
-    sget-object v6, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
-
-    invoke-interface {v5, v6}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
-
-    :no_close
-    return-void
+    goto :request_failed
 
     :got_body
     invoke-static {v3}, Lradiant/RLAPILyricsWorker;->parseLines(Ljava/lang/String;)Ljava/util/ArrayList;
@@ -432,7 +489,7 @@
 
     invoke-static {v4}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :request_failed
 
     :parse_ok
     invoke-virtual {v3}, Ljava/util/ArrayList;->size()I
@@ -445,7 +502,7 @@
 
     invoke-static {v5}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    return-void
+    goto :request_failed
 
     :nonempty
     new-instance v5, Ljava/lang/StringBuilder;
@@ -466,11 +523,7 @@
 
     invoke-static {v5}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
-    iget-object v4, p0, Lradiant/RLAPILyricsWorker;->key:Ljava/lang/String;
-
-    sget-object v5, Lradiant/RLAPILyricsHook;->currentKey:Ljava/lang/String;
-
-    invoke-virtual {v4, v5}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->isCurrent()Z
 
     move-result v4
 
@@ -512,6 +565,8 @@
 
     const/4 v6, 0x1
 
+    invoke-interface {v5, v8}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
+
     sput-boolean v6, Lradiant/RLAPILyricsHook;->isRlState:Z
 
     iget-object v6, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->K:Lkotlinx/coroutines/flow/MutableStateFlow;
@@ -520,25 +575,34 @@
 
     invoke-interface {v6, v7}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 
+    sget-boolean v9, Lradiant/RLAPILyricsHook;->keepOpen:Z
+
+    if-nez v9, :open_lyrics
+
     sget-boolean v9, Lradiant/StickyLyrics;->enabled:Z
 
     if-eqz v9, :skip_n
+
+    :open_lyrics
 
     iget-object v6, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->P:Lkotlinx/coroutines/flow/MutableStateFlow;
 
     invoke-interface {v6, v7}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
 
     :skip_n
-    invoke-interface {v5, v8}, Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V
-
     :done
+    return-void
+
+    :request_failed
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->failCurrent()V
+
     return-void
 .end method
 
 
 # virtual methods
 .method public run()V
-    .locals 1
+    .locals 2
 
     :try_start
     invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->runImpl()V
@@ -550,6 +614,14 @@
 
     :catch_all
     move-exception v0
+
+    invoke-virtual {v0}, Ljava/lang/Throwable;->toString()Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-static {v1}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
+
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->failCurrent()V
 
     return-void
 .end method
