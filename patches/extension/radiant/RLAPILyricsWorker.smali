@@ -14,6 +14,8 @@
 
 .field public final lyricsId:Ljava/lang/String;
 
+.field public static volatile clientIp:Ljava/lang/String;
+
 
 # direct methods
 .method public constructor <init>(Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
@@ -42,6 +44,8 @@
     move-result v0
 
     if-eqz v0, :done
+
+    invoke-static {}, Lradiant/WordLyrics;->clear()V
 
     const/4 v0, 0x0
 
@@ -114,6 +118,99 @@
     return v3
 .end method
 
+# Public client IP (needed for debugging with ratelimits)
+.method static clientIp()Ljava/lang/String;
+    .locals 6
+
+    sget-object v0, Lradiant/RLAPILyricsWorker;->clientIp:Ljava/lang/String;
+
+    if-eqz v0, :fetch
+
+    return-object v0
+
+    :fetch
+    :try_start
+    new-instance v0, Ljava/net/URL;
+
+    const-string v1, "https://api.ipify.org?format=text"
+
+    invoke-direct {v0, v1}, Ljava/net/URL;-><init>(Ljava/lang/String;)V
+
+    invoke-virtual {v0}, Ljava/net/URL;->openConnection()Ljava/net/URLConnection;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/net/HttpURLConnection;
+
+    const/16 v1, 0x5dc
+
+    invoke-virtual {v0, v1}, Ljava/net/URLConnection;->setConnectTimeout(I)V
+
+    invoke-virtual {v0, v1}, Ljava/net/URLConnection;->setReadTimeout(I)V
+
+    invoke-virtual {v0}, Ljava/net/HttpURLConnection;->getResponseCode()I
+
+    move-result v1
+
+    const/16 v2, 0xc8
+
+    if-eq v1, v2, :ok
+
+    invoke-virtual {v0}, Ljava/net/HttpURLConnection;->disconnect()V
+
+    goto :fail
+
+    :ok
+    invoke-virtual {v0}, Ljava/net/HttpURLConnection;->getInputStream()Ljava/io/InputStream;
+
+    move-result-object v1
+
+    new-instance v2, Ljava/io/InputStreamReader;
+
+    const-string v3, "UTF-8"
+
+    invoke-direct {v2, v1, v3}, Ljava/io/InputStreamReader;-><init>(Ljava/io/InputStream;Ljava/lang/String;)V
+
+    new-instance v3, Ljava/io/BufferedReader;
+
+    invoke-direct {v3, v2}, Ljava/io/BufferedReader;-><init>(Ljava/io/Reader;)V
+
+    invoke-virtual {v3}, Ljava/io/BufferedReader;->readLine()Ljava/lang/String;
+
+    move-result-object v4
+
+    invoke-virtual {v3}, Ljava/io/BufferedReader;->close()V
+
+    invoke-virtual {v0}, Ljava/net/HttpURLConnection;->disconnect()V
+
+    if-eqz v4, :fail
+
+    invoke-virtual {v4}, Ljava/lang/String;->trim()Ljava/lang/String;
+
+    move-result-object v4
+
+    invoke-virtual {v4}, Ljava/lang/String;->isEmpty()Z
+
+    move-result v5
+
+    if-nez v5, :fail
+
+    sput-object v4, Lradiant/RLAPILyricsWorker;->clientIp:Ljava/lang/String;
+
+    return-object v4
+
+    :try_end
+    .catchall {:try_start .. :try_end} :catch_all
+
+    :catch_all
+    move-exception v0
+
+    :fail
+    const-string v0, "null"
+
+    return-object v0
+.end method
+
 .method public static fetch(Ljava/lang/String;Z)Ljava/lang/String;
     .locals 7
 
@@ -136,6 +233,8 @@
 
     invoke-virtual {v0, v1}, Ljava/net/URLConnection;->setConnectTimeout(I)V
 
+    const v1, 0xafc8
+
     invoke-virtual {v0, v1}, Ljava/net/URLConnection;->setReadTimeout(I)V
 
     if-eqz p1, :no_auth
@@ -154,7 +253,9 @@
 
     const-string v1, "x-client-ip"
 
-    const-string v2, "null"
+    invoke-static {}, Lradiant/RLAPILyricsWorker;->clientIp()Ljava/lang/String;
+
+    move-result-object v2
 
     invoke-virtual {v0, v1, v2}, Ljava/net/URLConnection;->setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
 
@@ -393,20 +494,168 @@
     return-object v1
 .end method
 
+# Returns "&isrc=<enc>" for the current track
+.method private isrcParam()Ljava/lang/String;
+    .locals 6
+
+    iget-object v0, p0, Lradiant/RLAPILyricsWorker;->key:Ljava/lang/String;
+
+    const/4 v1, 0x0
+
+    :loop
+    invoke-static {v0}, Lradiant/IsrcCache;->get(Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v2
+
+    if-eqz v2, :retry
+
+    invoke-virtual {v2}, Ljava/lang/String;->trim()Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-virtual {v2}, Ljava/lang/String;->isEmpty()Z
+
+    move-result v3
+
+    if-nez v3, :retry
+
+    :try_enc_start
+    invoke-static {v2}, Lradiant/RLAPILyricsWorker;->uric(Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v2
+
+    :try_enc_end
+    .catchall {:try_enc_start .. :try_enc_end} :enc_fail
+
+    :enc_done
+    new-instance v3, Ljava/lang/StringBuilder;
+
+    const-string v4, "&isrc="
+
+    invoke-direct {v3, v4}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+
+    invoke-virtual {v3, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object v2
+
+    return-object v2
+
+    :enc_fail
+    move-exception v3
+
+    goto :enc_done
+
+    :retry
+    # keep waiting for TIDAL's mapper to cache the ISRC while this track is still current
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->isCurrent()Z
+
+    move-result v3
+
+    if-eqz v3, :giveup
+
+    const/16 v3, 0x28
+
+    if-ge v1, v3, :giveup
+
+    :try_sleep_start
+    const-wide/16 v3, 0x64
+
+    invoke-static {v3, v4}, Ljava/lang/Thread;->sleep(J)V
+
+    :try_sleep_end
+    .catchall {:try_sleep_start .. :try_sleep_end} :sleep_catch
+
+    :sleep_done
+    add-int/lit8 v1, v1, 0x1
+
+    goto :loop
+
+    :sleep_catch
+    move-exception v3
+
+    goto :sleep_done
+
+    :giveup
+    const-string v0, ""
+
+    return-object v0
+.end method
+
+# URL-encode like JS encodeURIComponent (so requests are byte identical to the desktop plugin)
+.method static uric(Ljava/lang/String;)Ljava/lang/String;
+    .locals 3
+
+    const-string v0, "UTF-8"
+
+    invoke-static {p0, v0}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "+"
+
+    const-string v2, "%20"
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "%21"
+
+    const-string v2, "!"
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "%27"
+
+    const-string v2, "\'"
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "%28"
+
+    const-string v2, "("
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "%29"
+
+    const-string v2, ")"
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    const-string v1, "%7E"
+
+    const-string v2, "~"
+
+    invoke-virtual {v0, v1, v2}, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
 .method private runImpl()V
-    .locals 11
+    .locals 13
 
     iget-object v0, p0, Lradiant/RLAPILyricsWorker;->title:Ljava/lang/String;
 
-    const-string v1, "UTF-8"
-
-    invoke-static {v0, v1}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    invoke-static {v0}, Lradiant/RLAPILyricsWorker;->uric(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v0
 
     iget-object v2, p0, Lradiant/RLAPILyricsWorker;->artist:Ljava/lang/String;
 
-    invoke-static {v2, v1}, Ljava/net/URLEncoder;->encode(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    invoke-static {v2}, Lradiant/RLAPILyricsWorker;->uric(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v1
 
@@ -423,6 +672,12 @@
     invoke-virtual {v2, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     invoke-virtual {v2, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-direct {p0}, Lradiant/RLAPILyricsWorker;->isrcParam()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v2, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
     const-string v0, "&platform=rl-mobile"
 
@@ -479,6 +734,8 @@
     goto :request_failed
 
     :got_body
+    move-object v11, v3
+
     invoke-static {v3}, Lradiant/RLAPILyricsWorker;->parseLines(Ljava/lang/String;)Ljava/util/ArrayList;
 
     move-result-object v3
@@ -536,6 +793,8 @@
     return-void
 
     :key_ok
+    invoke-static {v11}, Lradiant/WordLyrics;->ingest(Ljava/lang/String;)V
+
     iget-object v4, p0, Lradiant/RLAPILyricsWorker;->vm:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
 
     iget-object v5, v4, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;->O:Lkotlinx/coroutines/flow/MutableStateFlow;

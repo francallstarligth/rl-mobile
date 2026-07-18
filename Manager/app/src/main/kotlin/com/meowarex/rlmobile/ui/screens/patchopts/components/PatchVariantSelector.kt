@@ -22,7 +22,8 @@ fun PatchVariantSelector(
         variants.forEachIndexed { index, variant ->
             SegmentedButton(
                 selected = index == selectedIndex,
-                onClick = { onSelect(index) },
+                enabled = variant.enabled,
+                onClick = { if (variant.enabled) onSelect(index) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = index,
                     count = variants.size,

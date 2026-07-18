@@ -32,11 +32,25 @@
       "order": 20,
       "fileNames": [
         "lyrics-rl-api.patch",
-        "lyrics-rl-api-observer.patch"
+        "lyrics-rl-api-observer.patch",
+        "lyrics-rl-api-isrc.patch"
       ],
       "title": "Radiant Lyrics API - WIP",
-      "description": "Use Radiant Lyrics API to fetch Lyrics (Higher quality & More providers)",
-      "default": false
+      "description": "Use Radiant Lyrics API to fetch Lyrics (Higher quality & More providers). Pick how the highlight moves: whole Line or word-by-word (Word).",
+      "default": false,
+      "defaultVariantIndex": 0,
+      "variants": [
+        {
+          "title": "Line",
+          "fileNames": []
+        },
+        {
+          "title": "Word",
+          "fileNames": [
+            "lyrics-rl-api-word.patch"
+          ]
+        }
+      ]
     },
     {
       "id": "PlayerBackdrop",
@@ -144,7 +158,7 @@
           "type": "toggle",
           "key": "cover_everywhere",
           "title": "Cover Everywhere - WIP",
-          "description": "Applies TIDAL's player backdrop to every Compose based page (Home & Collection)",
+          "description": "Applies TIDAL's native blurred album-art backdrop to every Compose based page (Home & Collection)",
           "default": false,
           "inline": true,
           "fileNames": [

@@ -169,15 +169,18 @@ fun PatchSelectionAccordion(
                                         .fillMaxWidth()
                                         .padding(bottom = 8.dp),
                                 ) {
+                                    val resolvedVariant =
+                                        if (patch.variants.isNotEmpty())
+                                            patch.resolveVariantIndex(variantIndex(patch)) {
+                                                optionState.toggle(patch, it)
+                                            }
+                                        else -1
                                     if (patch.variants.isNotEmpty()) {
                                         val effective = patch.effectiveVariants { optionState.toggle(patch, it) }
-                                        val resolved = patch.resolveVariantIndex(variantIndex(patch)) {
-                                            optionState.toggle(patch, it)
-                                        }
                                         PatchVariantSelector(
                                             variants = effective,
                                             selectedIndex = effective
-                                                .indexOfFirst { it.originalIndex == resolved }
+                                                .indexOfFirst { it.originalIndex == resolvedVariant }
                                                 .coerceAtLeast(0),
                                             onSelect = { pos ->
                                                 effective.getOrNull(pos)?.let { onSelectVariant(patch, it.originalIndex) }
@@ -186,12 +189,16 @@ fun PatchSelectionAccordion(
                                     }
 
                                     for (option in inlineToggles) key(option.key) {
-                                        InlineToggleRow(
-                                            title = option.title,
-                                            description = option.description,
-                                            checked = optionState.toggle(patch, option),
-                                            onCheckedChange = { optionState.setToggle(patch, option, it) },
-                                        )
+                                        val show = option.requiresVariant == null ||
+                                            option.requiresVariant == resolvedVariant
+                                        if (show) {
+                                            InlineToggleRow(
+                                                title = option.title,
+                                                description = option.description,
+                                                checked = optionState.toggle(patch, option),
+                                                onCheckedChange = { optionState.setToggle(patch, option, it) },
+                                            )
+                                        }
                                     }
 
                                     if (hasSheetOptions) {

@@ -15,6 +15,7 @@ Every Patch & Integration can be disabled/enabled & adjusted exactly how you wan
 - Keeps lyrics controls visible
 - One-handed player controls
 - Redesigned mini-player with gestures
+- Word Level Lyrics (Word by Word) <3
 - Syllable Level lyrics (SoonTM)
 
 ### Integrations

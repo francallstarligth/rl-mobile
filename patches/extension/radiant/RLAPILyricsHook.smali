@@ -156,13 +156,27 @@
     goto :invalid_track
 
     :title_ok
+    # match desktop: primary artist name (artist?.name), fall back to the joined list
+    invoke-virtual {p1}, Lcom/aspiro/wamp/model/MediaItem;->getArtist()Lcom/aspiro/wamp/model/Artist;
+
+    move-result-object v3
+
+    if-eqz v3, :use_artist_names
+
+    invoke-virtual {v3}, Lcom/aspiro/wamp/model/Artist;->getName()Ljava/lang/String;
+
+    move-result-object v2
+
+    if-nez v2, :artist_present
+
+    :use_artist_names
     invoke-virtual {p1}, Lcom/aspiro/wamp/model/MediaItem;->getArtistNames()Ljava/lang/String;
 
     move-result-object v2
 
     if-nez v2, :artist_present
 
-    const-string v3, "bail: getArtistNames() returned null"
+    const-string v3, "bail: artist name null"
 
     invoke-static {v3}, Lradiant/RLAPILyricsHook;->dlog(Ljava/lang/String;)V
 
