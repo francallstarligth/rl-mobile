@@ -48,6 +48,7 @@ data class VariantSpec(
     val title: String,
     val fileNames: List<String> = emptyList(),
     val extensionFiles: List<String> = emptyList(),
+    val enabled: Boolean = true,
 )
 
 /** A single advanced option. Discriminated by `"type"` in JSON. */
@@ -173,7 +174,7 @@ fun builtinPatchSpecs(context: Context, json: Json): List<PatchSpec> = try {
 }
 
 @Immutable
-data class EffectiveVariant(val originalIndex: Int, val title: String)
+data class EffectiveVariant(val originalIndex: Int, val title: String, val enabled: Boolean = true)
 
 fun PatchSpec.effectiveVariants(isOptionOn: (OptionSpec.Toggle) -> Boolean): List<EffectiveVariant> {
     if (variants.isEmpty()) return emptyList()
@@ -186,19 +187,22 @@ fun PatchSpec.effectiveVariants(isOptionOn: (OptionSpec.Toggle) -> Boolean): Lis
         }
     }
     return variants.mapIndexedNotNull { index, variant ->
-        if (index in hidden) null else EffectiveVariant(index, relabel[index] ?: variant.title)
+        if (index in hidden) null
+        else EffectiveVariant(index, relabel[index] ?: variant.title, variant.enabled)
     }
 }
 
 fun PatchSpec.resolveVariantIndex(stored: Int, isOptionOn: (OptionSpec.Toggle) -> Boolean): Int {
     val visible = effectiveVariants(isOptionOn)
-    if (visible.isEmpty() || visible.any { it.originalIndex == stored }) return stored
+    // never resolve onto a greyed/disabled variant
+    if (visible.isEmpty() || visible.any { it.originalIndex == stored && it.enabled }) return stored
     val relabelKeys = buildSet {
         for (option in advancedOptions) {
             if (option is OptionSpec.Toggle && isOptionOn(option)) addAll(option.relabelVariants.keys)
         }
     }
-    return visible.firstOrNull { it.originalIndex in relabelKeys }?.originalIndex
+    return visible.firstOrNull { it.originalIndex in relabelKeys && it.enabled }?.originalIndex
+        ?: visible.firstOrNull { it.enabled }?.originalIndex
         ?: visible.first().originalIndex
 }
 

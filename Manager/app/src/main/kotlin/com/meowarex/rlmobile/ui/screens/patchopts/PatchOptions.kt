@@ -79,6 +79,8 @@ data class PatchOptions(
             if (spec.variants.isEmpty()) {
                 if (!enabled) addAll(spec.fileNames)
             } else {
+                // base fileNames apply for every variant while enabled; disable them when off
+                if (!enabled) addAll(spec.fileNames)
                 val selected = variantIndex(spec)
                 spec.variants.forEachIndexed { index, variant ->
                     if (!enabled || index != selected) addAll(variant.fileNames)

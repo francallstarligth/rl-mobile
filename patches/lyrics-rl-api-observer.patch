@@ -1,14 +1,23 @@
 --- a/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$observeLyricsProgress$1$a.smali
 +++ b/com/tidal/android/feature/playerscreen/ui/PlayerViewModel$observeLyricsProgress$1$a.smali
-@@ -191,6 +191,13 @@
+@@ -58,6 +58,8 @@
+     .line 5
+     int-to-long p1, p1
+ 
++    invoke-static {p1, p2}, Lradiant/WordLyrics;->onProgress(J)V
++
+     .line 6
+     iget-object v0, p0, Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel$observeLyricsProgress$1$a;->a:Lcom/tidal/android/feature/playerscreen/ui/PlayerViewModel;
+ 
+@@ -191,6 +193,13 @@
  
      .line 67
      :cond_3
-+    sget-boolean v6, Lradiant/RLAPILyricsHook;->isRlState:Z    # read RL flag
++    sget-boolean v6, Lradiant/RLAPILyricsHook;->isRlState:Z
 +
-+    if-eqz v6, :radiant_skip    # skip if not RL
++    if-eqz v6, :radiant_skip
 +
-+    const/4 v5, -0x1    # RL no-match default = -1
++    const/4 v5, -0x1
 +
 +    :radiant_skip
      if-gez v4, :cond_4
