@@ -53,6 +53,8 @@ private fun PatchOptionsScreenPreview(
             onSelectVariant = { _, _ -> },
             optionState = PatchOptionState.Preview,
             isConfigValid = parameters.isConfigValid,
+            selectedIconId = null,
+            onSelectIcon = {},
             onInstall = {},
         )
     }

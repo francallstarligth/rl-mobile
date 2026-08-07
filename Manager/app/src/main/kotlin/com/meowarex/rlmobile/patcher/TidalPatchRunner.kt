@@ -25,6 +25,7 @@ class TidalPatchRunner(
         SmaliPatchStep(options),
         ReorganizeDexStep(),
         PatchManifestStep(options),
+        PatchIconStep(options),
         PatchCertsStep(),
         SaveMetadataStep(options),
 

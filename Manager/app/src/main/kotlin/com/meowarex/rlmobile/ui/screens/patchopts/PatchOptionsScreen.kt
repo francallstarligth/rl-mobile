@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +71,8 @@ class PatchOptionsScreen(
             customPatches = model.customPatches,
             onSelectCustomTidalApk = { model.selectCustomTidalApk(navigator) },
             onSelectCustomPatches = { model.selectCustomPatches(navigator) },
+            selectedIconId = model.selectedIconId,
+            onSelectIcon = model::selectIcon,
 
             specs = model.specs,
             isPatchEnabled = model::isPatchEnabled,
@@ -110,6 +116,8 @@ fun PatchOptionsScreenContent(
     onSelectCustomTidalApk: () -> Unit,
     customPatches: PatchComponent?,
     onSelectCustomPatches: () -> Unit,
+    selectedIconId: String?,
+    onSelectIcon: (String?) -> Unit,
 
     specs: List<PatchSpec>,
     isPatchEnabled: (PatchSpec) -> Boolean,
@@ -232,6 +240,11 @@ fun PatchOptionsScreenContent(
                 modifier = if (integrations.isEmpty()) Modifier.padding(top = 4.dp) else Modifier,
             )
 
+            IconSelectorOption(
+                selectedIconId = selectedIconId,
+                onSelectIcon = onSelectIcon,
+            )
+
             if (isDevMode) {
                 TextDivider(
                     text = stringResource(R.string.patchopts_divider_advanced),
@@ -297,6 +310,99 @@ fun PatchOptionsScreenContent(
             ) {
                 Text(stringResource(R.string.action_install))
             }
+        }
+    }
+}
+private data class IconOption(val id: String, val drawableRes: Int)
+
+private val ICON_OPTIONS = listOf(
+    IconOption("alt1", R.drawable.ic_launcher_alt1),
+    IconOption("alt2", R.drawable.ic_launcher_alt2),
+    IconOption("alt3", R.drawable.ic_launcher_alt3),
+    IconOption("alt4", R.drawable.ic_launcher_alt4),
+    IconOption("alt5", R.drawable.ic_launcher_alt5),
+    IconOption("alt6", R.drawable.ic_launcher_alt6),
+    IconOption("alt7", R.drawable.ic_launcher_alt7),
+)
+
+@Composable
+private fun IconSelectorOption(
+    selectedIconId: String?,
+    onSelectIcon: (String?) -> Unit,
+) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text(
+            text = stringResource(R.string.patchopts_icon_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.patchopts_icon_desc),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp, top = 2.dp),
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            item {
+                IconThumbnail(
+                    icon = painterResource(R.drawable.ic_music_note),
+                    label = stringResource(R.string.patchopts_icon_default),
+                    selected = selectedIconId == null,
+                    onClick = { onSelectIcon(null) },
+                )
+            }
+            items(ICON_OPTIONS, key = { it.id }) { option ->
+                IconThumbnail(
+                    icon = painterResource(option.drawableRes),
+                    label = null,
+                    selected = selectedIconId == option.id,
+                    onClick = { onSelectIcon(option.id) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun IconThumbnail(
+    icon: androidx.compose.ui.graphics.painter.Painter,
+    label: String?,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(64.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(
+                    width = if (selected) 3.dp else 1.dp,
+                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(16.dp),
+                )
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = icon,
+                contentDescription = label,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(if (label != null) 12.dp else 0.dp),
+            )
+        }
+        if (label != null) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
     }
 }

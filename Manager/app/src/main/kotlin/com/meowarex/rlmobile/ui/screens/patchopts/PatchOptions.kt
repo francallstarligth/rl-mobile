@@ -38,6 +38,7 @@ data class PatchOptions(
     val optionFloats: Map<String, Float> = emptyMap(),
     val optionBools: Map<String, Boolean> = emptyMap(),
     val optionInts: Map<String, Int> = emptyMap(),
+    val selectedIconId: String? = null,
 ) : Parcelable {
 
     fun isEnabled(spec: PatchSpec): Boolean =

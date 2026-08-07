@@ -248,7 +248,13 @@ class PatchOptionsModel(
     var customTidalApk by mutableStateOf<PatchComponent?>(null)
         private set
     var customPatches by mutableStateOf<PatchComponent?>(null)
+        private set    
+    var selectedIconId by mutableStateOf(prefilledOptions.selectedIconId)
         private set
+
+    fun selectIcon(iconId: String?) {
+        selectedIconId = iconId
+    }
 
     fun selectCustomTidalApk(navigator: Navigator) = screenModelScope.launch {
         customTidalApk = navigator.pushForResult(
@@ -377,6 +383,7 @@ class PatchOptionsModel(
             optionFloats = optionFloats,
             optionBools = optionBools,
             optionInts = optionInts,
+            selectedIconId = selectedIconId,
         )
     }
 

@@ -247,6 +247,9 @@
   <string name="patchopts_custom_tidal_apk_desc">Provide your own Stock TIDAL APK to patch instead of the version from Github.</string>
   <string name="patchopts_custom_patches_title">Custom Patches</string>
   <string name="patchopts_custom_patches_desc">Provide your own Patches Zip to use instead of the ones from Github.</string>
+  <string name="patchopts_icon_title">App Icon</string>
+  <string name="patchopts_icon_desc">Choose a custom icon for the patched app, or keep the original TIDAL icon.</string>
+  <string name="patchopts_icon_default">Default</string>
   <string name="patchopts_bypass_incompatible_title">Bypass Incompatible</string>
   <string name="patchopts_bypass_incompatible_desc">Force-allow path-gated patches. This can be VERY DANGEROUS!</string>
   <string name="patchopts_divider_basic">Basic</string>
